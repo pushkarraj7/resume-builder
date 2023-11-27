@@ -1,8 +1,41 @@
-import React, { useState } from 'react';
+import React, { useState, ReactNode, Component, ErrorInfo } from 'react';
 
+// Define the ErrorBoundary component
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
+class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundaryState> {
+  constructor(props: ErrorBoundaryProps) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error): ErrorBoundaryState {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, errorInfo: ErrorInfo): void {
+    // You can log the error or handle it in a custom way
+    console.error('Error caught by ErrorBoundary:', error, errorInfo);
+  }
+
+  render(): ReactNode {
+    if (this.state.hasError) {
+      return <div>Error occurred. Please refresh the page or try again later.</div>;
+    }
+
+    return this.props.children;
+  }
+}
+
+// Rest of the EditorLayout component
 import DataHeaders from './components/EditHeaders';
 import EditSection from './components/EditSection';
-import ErrorBoundary from 'src/helpers/common/components/ErrorBoundary';
 import { OutlinedButton } from 'src/helpers/common/atoms/Buttons';
 import { headers } from 'src/helpers/constants/editor-data';
 import { resetResumeStore } from 'src/stores/useResumeStore';
